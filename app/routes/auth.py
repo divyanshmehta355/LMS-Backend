@@ -6,7 +6,7 @@ router = APIRouter()
 
 @router.post("/signup")
 def signup(request: SignupRequest):
-    return register_user(request.email, request.password)
+    return register_user(request.email, request.password, request.userName)
 
 @router.post("/send-otp")
 def send_otp_route(request: OTPRequest):

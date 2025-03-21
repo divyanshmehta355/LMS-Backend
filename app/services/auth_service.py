@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from app.config import account
 
-def register_user(email: str, password: str):
+def register_user(email: str, password: str, userName: str):
     try:
-        user = account.create("unique()", email=email, password=password)
+        user = account.create("unique()", email=email, password=password, name=userName)
         return {"userId": user["$id"]}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
