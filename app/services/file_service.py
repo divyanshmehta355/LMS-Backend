@@ -10,37 +10,41 @@ load_dotenv()
 
 async def upload_file(file: UploadFile):
     try:
-        # Save uploaded file temporarily
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
-        temp_file.write(file.file.read())
-        temp_file.close()
-
-        # Upload file to Appwrite Storage
+        # Get the bucket ID from environment variables
         bucket_id = os.getenv("APPWRITE_BUCKET_ID")
+
+        # Read file content as a stream
+        file_stream = file.file
+
+        # Upload file directly to Appwrite
         result = storage.create_file(
             bucket_id=bucket_id,
             file_id="unique()",
-            file=InputFile.from_path(temp_file.name),
+            file=InputFile.from_bytes(file_stream.read(), filename=file.filename),
             permissions=["read(\"any\")"]
         )
-
-        # Delete temporary file
-        os.remove(temp_file.name)
 
         return {"fileId": result["$id"], "message": "File uploaded successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+async def bulk_upload_files(files: list[UploadFile]):
+    try:
+        bucket_id = os.getenv("APPWRITE_BUCKET_ID")
+        uploaded_files = []
 
-async def bulk_upload_files(files: List[UploadFile]):
-    """Uploads multiple files to Appwrite Storage"""
-    uploaded_files = []
+        for file in files:
+            file_stream = file.file
 
-    for file in files:
-        try:
-            result = await upload_file(file)
-            uploaded_files.append(result)
-        except Exception as e:
-            uploaded_files.append({"filename": file.filename, "error": str(e)})
+            result = storage.create_file(
+                bucket_id=bucket_id,
+                file_id="unique()",
+                file=InputFile.from_bytes(file_stream.read(), filename=file.filename),
+                permissions=["read(\"any\")"]
+            )
 
-    return {"uploaded_files": uploaded_files}
+            uploaded_files.append({"fileId": result["$id"], "filename": file.filename})
+
+        return {"message": "Files uploaded successfully", "files": uploaded_files}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
