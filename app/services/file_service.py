@@ -3,8 +3,6 @@ from app.appwrite_config import storage
 from appwrite.input_file import InputFile
 import os
 from dotenv import load_dotenv
-import tempfile
-from typing import List
 
 load_dotenv()
 
