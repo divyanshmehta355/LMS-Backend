@@ -3,3 +3,4 @@ pydantic
 appwrite
 python-dotenv
 uvicorn
+python-multipart

@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.config import account
+from app.appwrite_config import account
 
 def register_user(email: str, password: str, userName: str):
     try:
