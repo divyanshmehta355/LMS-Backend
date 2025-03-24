@@ -6,11 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+bucket_id = os.getenv("APPWRITE_BUCKET_ID")
+
 async def upload_file(file: UploadFile):
     try:
-        # Get the bucket ID from environment variables
-        bucket_id = os.getenv("APPWRITE_BUCKET_ID")
-
         # Read file content as a stream
         file_stream = file.file
 
@@ -28,7 +27,6 @@ async def upload_file(file: UploadFile):
 
 async def bulk_upload_files(files: list[UploadFile]):
     try:
-        bucket_id = os.getenv("APPWRITE_BUCKET_ID")
         uploaded_files = []
 
         for file in files:
